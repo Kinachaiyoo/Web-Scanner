@@ -5,7 +5,6 @@ import re
 import socket
 import time
 import requests
-from pystyle import *
 
 def start():
     global single_domain;
@@ -15,6 +14,31 @@ def start():
     path_of_folder = single_domain;
     creating_folder_path(path_of_folder);
 
+    domain_part = single_domain.split(":")
+    if len(domain_part) > 1:
+        domain_to_ip = domain_part[0]
+        port_number = domain_part[1]
+        checking = f'{domain_to_ip}:{port_number}'
+    else:
+        checking = single_domain.replace('http://','').replace('https://','')
+        domain_to_ip = socket.gethostbyname(checking)
+
+    from libraries.tech import detect_cms, detect_server
+    from libraries.waf import detect_waf
+
+    protocol = detect_http_or_https(single_domain)
+    url = protocol
+    print(f'Target Domain: {checking}')
+    print(f'Target IP: {domain_to_ip}')
+    print(f'PROTOCOL: {url}')
+    cms = detect_cms(single_domain)
+    print(f"CMS: {cms}")
+    server = detect_server(single_domain)
+    print(f"SERVER: {server}")
+    detect_waf(url)
+    print('\n-----------------------------------------------')
+    print('\n[*] Searching For Sensitive Paths & Files.....\n')
+
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
@@ -23,6 +47,17 @@ def creating_folder_path(path_of_folder):
         print("Target Folder Already Exists...")
         print("Remove Or Replace it before contuning...")
         exit()
+
+def detect_http_or_https(url):
+    if not url.startswith('http://') and not url.startswith('https://'):
+        url = 'http://' + url
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.url
+        return 'Unknown'
+    except requests.exceptions.RequestException:
+        return 'Invalid'
 
 def scanner():
     value = True;
@@ -47,7 +82,7 @@ def scanner():
             print("!!! Not a valid option. Try again. !!!")
 
 def options():
-    print(Colors.yellow+"""-----------------------------------------------------------------------------------------
+    print("""-----------------------------------------------------------------------------------------
 1.  WEB DOMAIN INFORMATION(IP, PROTOCOL, CMS DETECTION, SERVER DETECTION, WAF DETECTION) -
 2.  SENSITIVE PATH FINDER                                                                -
 3.  MISCONFIGURATIONS/SENSITIVE SCANS(WORDPRESS, JOOMLA, DRUPAL, PHPMYADMIN)             -
