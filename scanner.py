@@ -5,14 +5,15 @@ import re
 import socket
 import time
 import requests
+import tkinter as tk
+from tkinter import scrolledtext, messagebox
+import threading
 
 def start():
-    global single_domain;
-    global protocol;
-    single_domain = input("Enter the Domain Name (website.com): ");
-    print("Creating a Target Folder *****");
-    path_of_folder = single_domain;
-    creating_folder_path(path_of_folder);
+    single_domain = domain_entry.get()
+    create_log("Creating a Target Folder *****\n", "blue")
+    path_of_folder = single_domain
+    creating_folder_path(path_of_folder)
 
     domain_part = single_domain.split(":")
     if len(domain_part) > 1:
@@ -20,7 +21,7 @@ def start():
         port_number = domain_part[1]
         checking = f'{domain_to_ip}:{port_number}'
     else:
-        checking = single_domain.replace('http://','').replace('https://','')
+        checking = single_domain.replace('http://', '').replace('https://', '')
         domain_to_ip = socket.gethostbyname(checking)
 
     from libraries.tech import detect_cms, detect_server
@@ -28,24 +29,24 @@ def start():
 
     protocol = detect_http_or_https(single_domain)
     url = protocol
-    print(f'Target Domain: {checking}')
-    print(f'Target IP: {domain_to_ip}')
-    print(f'PROTOCOL: {url}')
+    create_log(f'Target Domain: {checking}\n', "green")
+    create_log(f'Target IP: {domain_to_ip}\n', "green")
+    create_log(f'PROTOCOL: {url}\n', "green")
     cms = detect_cms(single_domain)
-    print(f"CMS: {cms}")
+    create_log(f"CMS: {cms}\n", "green")
     server = detect_server(single_domain)
-    print(f"SERVER: {server}")
+    create_log(f"SERVER: {server}\n", "green")
     detect_waf(url)
-    print('\n-----------------------------------------------')
-    print('\n[*] Searching For Sensitive Paths & Files.....\n')
+    create_log('\n-----------------------------------------------\n', "blue")
+    create_log('\n[*] Searching For Sensitive Paths & Files.....\n', "blue")
 
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
-        print(f"Folder Created Successfully...{path_of_folder}")
+        create_log(f"Folder Created Successfully...{path_of_folder}\n", "green")
     else:
-        print("Target Folder Already Exists...")
-        print("Remove Or Replace it before contuning...")
+        create_log("Target Folder Already Exists...\n", "red")
+        create_log("Remove Or Replace it before continuing...\n", "red")
         exit()
 
 def detect_http_or_https(url):
@@ -60,29 +61,13 @@ def detect_http_or_https(url):
         return 'Invalid'
 
 def scanner():
-    value = True;
+    value = True
     while value:
-        print(""" 
-        1. START SCAN
-        2. SHOW AVAILABLE SCANNING MODULE
-        3. Exit
-        """)
-        value = input("Choose an option to continue: ")
-        if value == "1":
-            os.system('cls' if os.name == 'nt' else 'clear')
-            start()
-        elif value == "2":
-            os.system('cls' if os.name == 'nt' else 'clear')
-            options()
-        elif value == "3":
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(Colors.red+"\n Thanks For Using! See You Soon :)")
-            value = False
-        else:
-            print("!!! Not a valid option. Try again. !!!")
+        os.system('cls' if os.name == 'nt' else 'clear')
+        start()
 
 def options():
-    print("""-----------------------------------------------------------------------------------------
+    create_log("""-----------------------------------------------------------------------------------------
 1.  WEB DOMAIN INFORMATION(IP, PROTOCOL, CMS DETECTION, SERVER DETECTION, WAF DETECTION) -
 2.  SENSITIVE PATH FINDER                                                                -
 3.  MISCONFIGURATIONS/SENSITIVE SCANS(WORDPRESS, JOOMLA, DRUPAL, PHPMYADMIN)             -
@@ -101,18 +86,40 @@ def options():
 16. TESTING CROSS SITE SCRIPTING VULNERABILITY                                           -
 17. DIRECTORY BRUTEFORCING                                                               -
 ------------------------------------------------------------------------------------------
-""")
+""", "blue")
 
+def create_log(message, color="black"):
+    # Use the `after` method to safely update the GUI from the background thread
+    log_text.after(0, log_text.insert, tk.END, message, color)
+    log_text.after(0, log_text.see, tk.END)
 
-def check():
-    try:
-        if platform.system().startswith("Linux"):
-            os.system("clear");
-            scanner()
-        elif platform.system().startwith("Windows"):
-            os.system("cls");
-            scanner()
-    except KeyboardInterrupt:
-        print("!!! Something went wrong. Please check and try again. !!!")
+def run_scan():
+    # Start the scanning process in a new thread
+    threading.Thread(target=start).start()
 
-check()
+# GUI Setup
+root = tk.Tk()
+root.title("Web Domain Scanner")
+root.geometry("800x600")
+
+# Domain Entry
+tk.Label(root, text="Enter the Domain Name (website.com):").pack(pady=10)
+domain_entry = tk.Entry(root, width=50)
+domain_entry.pack(pady=10)
+
+# Buttons
+tk.Button(root, text="START SCAN", command=run_scan).pack(pady=10)
+tk.Button(root, text="SHOW AVAILABLE SCANNING MODULE", command=options).pack(pady=10)
+
+# Log Output
+log_text = scrolledtext.ScrolledText(root, width=100, height=30)
+log_text.pack(pady=10)
+
+# Adding color tags
+log_text.tag_configure("red", foreground="red")
+log_text.tag_configure("green", foreground="green")
+log_text.tag_configure("blue", foreground="blue")
+log_text.tag_configure("black", foreground="black")
+
+# Start GUI
+root.mainloop()
