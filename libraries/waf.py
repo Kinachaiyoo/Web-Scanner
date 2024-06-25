@@ -28,7 +28,7 @@ def detect_waf(url):
         if detected_wafs:
             print(f"[*] WAF DETECTED: {', '.join(detected_wafs)}")
         else:
-            print(Colors.red+f"[-] No WAF Detected on {url}")
+            print("[-] No WAF Detected on {url}")
     except requests.RequestException as e:
         print(f"An error occurred while checking {url}: {str(e)}")
 
