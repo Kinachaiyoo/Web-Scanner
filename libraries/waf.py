@@ -1,5 +1,7 @@
 import requests
-def detect_waf(url):
+import threading
+
+def detect_waf(url, create_log):  
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.96 Safari/537.36',
     }
@@ -26,9 +28,8 @@ def detect_waf(url):
                 detected_wafs.append(waf_name)
 
         if detected_wafs:
-            print(f"[*] WAF DETECTED: {', '.join(detected_wafs)}")
+            create_log(f"[*] WAF DETECTED: {', '.join(detected_wafs)}")
         else:
-            print("[-] No WAF Detected on {url}")
+            create_log(f"[-] No WAF Detected on {url}")
     except requests.RequestException as e:
-        print(f"An error occurred while checking {url}: {str(e)}")
-
+        create_log(f"An error occurred while checking {url}: {str(e)}")

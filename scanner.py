@@ -10,8 +10,9 @@ from tkinter import scrolledtext, messagebox
 import threading
 
 def start():
+    create_log(f"\n[*] Scanning Started on:  {start_time_str}", "green")
     single_domain = domain_entry.get()
-    create_log("Creating a Target Folder *****\n", "blue")
+    create_log("\n[!] Creating a Target Folder *****\n", "yellow")
     path_of_folder = single_domain
     creating_folder_path(path_of_folder)
 
@@ -24,21 +25,51 @@ def start():
         checking = single_domain.replace('http://', '').replace('https://', '')
         domain_to_ip = socket.gethostbyname(checking)
 
+    create_log("\n[-]+++++++++++GATHERING TARGET'S INFORMATION++++++++++++\n", "yellow")
     from libraries.tech import detect_cms, detect_server
     from libraries.waf import detect_waf
 
     protocol = detect_http_or_https(single_domain)
     url = protocol
-    create_log(f'Target Domain: {checking}\n', "green")
-    create_log(f'Target IP: {domain_to_ip}\n', "green")
-    create_log(f'PROTOCOL: {url}\n', "green")
+    create_log(f'\n[-] Target Domain: {checking}\n', "green")
+    create_log(f'[-] Target IP: {domain_to_ip}\n', "green")
+    create_log(f'[-] PROTOCOL: {url}\n', "green")
     cms = detect_cms(single_domain)
-    create_log(f"CMS: {cms}\n", "green")
+    create_log(f"[-] CMS: {cms}\n", "green")
     server = detect_server(single_domain)
-    create_log(f"SERVER: {server}\n", "green")
-    detect_waf(url)
-    create_log('\n-----------------------------------------------\n', "blue")
+    create_log(f"[-] SERVER: {server}\n", "green")
+    detect_waf(url, create_log)
+    create_log('\n\n-----------------------------------------------\n')
     create_log('\n[*] Searching For Sensitive Paths & Files.....\n', "blue")
+
+    from libraries.sensitive import sensitive_urls
+    sensitive_urls(protocol)
+    create_log('\n-----------------------------------------------\n')
+    folder_path1 = os.path.join(single_domain, "results")
+    if not os.path.exists(folder_path1):
+        os.makedirs(folder_path1)  
+
+    from libraries.info import scann
+    output_file=os.path.join(folder_path1, "Target_info.txt")
+    outing=os.path.join(folder_path1, "scanned_ports.txt")
+    scann(single_domain, output_file)
+    create_log('\n-----------------------------------------------\n')
+    create_log('\n[+] Scanning Open Ports And Finding Exploits:-\n', "blue")
+    dest = f"https://internetdb.shodan.io/{domain_to_ip}"
+    response = requests.get(dest)
+    data = response.json()
+    ports = data.get('ports', [])
+    vulns = data.get('vulns', [])
+    cpes = data.get('cpes', [])
+    create_log(f'[-] Ports: {ports}',"blue")
+    create_log(f'[-] Vulns: {vulns}',"blue")
+    create_log(f'[-] Cpes:  {cpes}',"blue")
+    write_results_to_file(outing, domain_to_ip, ports, vulns, cpes)
+    create_log(f'[-] Results Saved To: {outing}',"green")
+
+    create_log('\n-----------------------------------------------',"blue")
+
+    create_log('\n[*] Extracting Javascript Urls....\n',"yellow")
 
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
@@ -59,6 +90,9 @@ def detect_http_or_https(url):
         return 'Unknown'
     except requests.exceptions.RequestException:
         return 'Invalid'
+
+start_time = time.time()
+start_time_str = time.ctime(start_time)
 
 def scanner():
     value = True
