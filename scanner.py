@@ -51,7 +51,7 @@ def start():
     from libraries.info import scann
     output_file=os.path.join(folder_path1, "Target_info.txt")
     outing=os.path.join(folder_path1, "scanned_ports.txt")
-    scann(single_domain, output_file)
+    scann(single_domain, output_file, create_log)
     create_log('\n\n-----------------------------------------------\n')
     create_log('\n[+] Scanning Open Ports And Finding Exploits:-\n', "blue")
     dest = f"https://internetdb.shodan.io/{domain_to_ip}"
@@ -69,6 +69,34 @@ def start():
     create_log('\n-----------------------------------------------\n')
 
     create_log('\n[*] Extracting Javascript Urls....\n',"blue")
+    from libraries.javascript import extract_js_links
+    js_file = path_of_folder + '/javascript_urls.txt'
+    extract_js_links(url, js_file)
+    create_log(f'\n[-] Javascript Urls Saved To: {js_file}\n', "green")
+    create_log('\n-----------------------------------------------\n',"cyan")
+    create_log("\n[*] Getting URLS From Public Archives...\n","blue")
+    target = single_domain
+    wayback_urls = fetch_urls_from_wayback(target)
+    unique_urls = set()
+    for url in wayback_urls:
+        url = url.strip()  # Remove leading/trailing whitespace
+        if url:
+            unique_urls.add(url)
+    filtered_urls = []
+    for url in unique_urls:
+        if not re.search(r'\.(woff|ttf|svg|eot|png|jpe?g|css|ico)$', url, re.IGNORECASE):
+            url = re.sub(r':(80|443)', '', url)
+            filtered_urls.append(url)
+    output_file = path_of_folder + '/filtered_urls.txt'  # Path to the output file
+    with open(output_file, 'w') as file:
+        for url in filtered_urls:
+            file.write(url + '\n')
+    create_log(f"\n[-] Filtered URLs saved to {output_file}","green")
+    time.sleep(1)
+
+    create_log( '\n-----------------------------------------------\n',"cyan")
+
+    create_log("\n[*] Filtering URLS for Open Redirect Vulnerability\n","blue")
 
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
@@ -96,6 +124,17 @@ def write_results_to_file(filename, domain_to_ip, ports, vulns, cpes):
         file.write(f"[ ✔ ] [PORTS]: {ports}\n")
         file.write(f"[ ✔ ] [VULNS]: {vulns}\n")
         file.write(f"[ ✔ ] [INFO]: {cpes}\n")
+
+def fetch_urls_from_wayback(target):
+    url = f"https://web.archive.org/cdx/search/cdx?url={target}/*&output=json&fl=original"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        urls = [entry[0] for entry in data[1:]]
+        return urls
+    else:
+        print(Colors.red+ "[*] Failed To Fetch Urls From Wayback...")
+        return []
 
 start_time = time.time()
 start_time_str = time.ctime(start_time)
