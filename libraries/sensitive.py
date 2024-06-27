@@ -1,11 +1,15 @@
 import requests
 import concurrent.futures
-def check_url(url,create_log):
-    response = requests.get(url)
-    if response.status_code == 200:
-        create_log(f"[-] Sensitive URL found: {url}")
 
-def sensitive_urls(party):
+def check_url(url, create_log):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            create_log(f"\n[-] Sensitive URL found: {url}", "green")
+    except Exception as e:
+        create_log(f"\n[!] Error checking URL {url}: {e}\n", "red")
+
+def find_sensitive_urls(sensiURL, create_log):
     sensitive_paths = ['/cpanel', '/admin', '/login', '/wp-admin', '/admin.php', '/wp-login.php',
                        '/administrator', '/moderator', '/manager', '/user', '/admin_login',
                        '/adminpanel', '/superadmin', '/sysadmin', '/signin', '/log_in', '/auth',
@@ -19,8 +23,8 @@ def sensitive_urls(party):
                        '/config.txt', '/backup', '/backups', '/backup.zip', '/backup.tar.gz', '/backup.tgz',
                        '/.git', '/.git/config', '/.gitignore']
 
-    urls = [f"{party}{path}" for path in sensitive_paths]
+    urls = [f"{sensiURL}{path}" for path in sensitive_paths]
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(check_url, urls)
-
-
+        futures = {executor.submit(check_url, url, create_log): url for url in urls}
+        for future in concurrent.futures.as_completed(futures):
+            future.result()

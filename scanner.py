@@ -10,9 +10,9 @@ from tkinter import scrolledtext, messagebox
 import threading
 
 def start():
-    create_log(f"\n[*] Scanning Started on:  {start_time_str}", "green")
+    create_log(f"\n[*] Scanning Started on:  {start_time_str}\n", "green")
     single_domain = domain_entry.get()
-    create_log("\n[!] Creating a Target Folder *****\n", "yellow")
+    create_log("\n[!] Creating a Target Folder ...... Please Wait\n", "blue")
     path_of_folder = single_domain
     creating_folder_path(path_of_folder)
 
@@ -25,7 +25,7 @@ def start():
         checking = single_domain.replace('http://', '').replace('https://', '')
         domain_to_ip = socket.gethostbyname(checking)
 
-    create_log("\n[-]+++++++++++GATHERING TARGET'S INFORMATION++++++++++++\n", "yellow")
+    create_log("\n[-]+++++++++++GATHERING TARGET'S INFORMATION++++++++++++\n", "blue")
     from libraries.tech import detect_cms, detect_server
     from libraries.waf import detect_waf
 
@@ -42,9 +42,8 @@ def start():
     create_log('\n\n-----------------------------------------------\n')
     create_log('\n[*] Searching For Sensitive Paths & Files.....\n', "blue")
 
-    from libraries.sensitive import sensitive_urls
-    sensitive_urls(protocol)
-    create_log('\n-----------------------------------------------\n')
+    from libraries.sensitive import find_sensitive_urls
+    find_sensitive_urls(protocol, create_log)
     folder_path1 = os.path.join(single_domain, "results")
     if not os.path.exists(folder_path1):
         os.makedirs(folder_path1)  
@@ -53,7 +52,7 @@ def start():
     output_file=os.path.join(folder_path1, "Target_info.txt")
     outing=os.path.join(folder_path1, "scanned_ports.txt")
     scann(single_domain, output_file)
-    create_log('\n-----------------------------------------------\n')
+    create_log('\n\n-----------------------------------------------\n')
     create_log('\n[+] Scanning Open Ports And Finding Exploits:-\n', "blue")
     dest = f"https://internetdb.shodan.io/{domain_to_ip}"
     response = requests.get(dest)
@@ -61,20 +60,20 @@ def start():
     ports = data.get('ports', [])
     vulns = data.get('vulns', [])
     cpes = data.get('cpes', [])
-    create_log(f'[-] Ports: {ports}',"blue")
-    create_log(f'[-] Vulns: {vulns}',"blue")
-    create_log(f'[-] Cpes:  {cpes}',"blue")
+    create_log(f'\n[-] Ports: {ports}',"red")
+    create_log(f'\n[-] Vulns: {vulns}',"red")
+    create_log(f'\n[-] Cpes:  {cpes}\n',"red")
     write_results_to_file(outing, domain_to_ip, ports, vulns, cpes)
-    create_log(f'[-] Results Saved To: {outing}',"green")
+    create_log(f'\n[-] Results Saved To: {outing}\n',"green")
 
-    create_log('\n-----------------------------------------------',"blue")
+    create_log('\n-----------------------------------------------\n')
 
-    create_log('\n[*] Extracting Javascript Urls....\n',"yellow")
+    create_log('\n[*] Extracting Javascript Urls....\n',"blue")
 
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
-        create_log(f"Folder Created Successfully...{path_of_folder}\n", "green")
+        create_log(f"\n[*] Folder Created Successfully...{path_of_folder}\n", "green")
     else:
         create_log("Target Folder Already Exists...\n", "red")
         create_log("Remove Or Replace it before continuing...\n", "red")
@@ -90,6 +89,13 @@ def detect_http_or_https(url):
         return 'Unknown'
     except requests.exceptions.RequestException:
         return 'Invalid'
+
+def write_results_to_file(filename, domain_to_ip, ports, vulns, cpes):
+    with open(filename, 'w', encoding='utf-8') as file:
+        file.write(f"[ ✔ ] [IP]: {domain_to_ip}\n")
+        file.write(f"[ ✔ ] [PORTS]: {ports}\n")
+        file.write(f"[ ✔ ] [VULNS]: {vulns}\n")
+        file.write(f"[ ✔ ] [INFO]: {cpes}\n")
 
 start_time = time.time()
 start_time_str = time.ctime(start_time)
