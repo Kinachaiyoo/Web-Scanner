@@ -10,7 +10,7 @@ from tkinter import scrolledtext, messagebox
 import threading
 
 def start():
-    create_log(f"\n[*] Scanning Started on:  {start_time_str}\n", "green")
+    create_log(f"\n[*] Scanning Started on:  {start_time_str}\n", "green4")
     single_domain = domain_entry.get()
     create_log("\n[!] Creating a Target Folder ...... Please Wait\n", "blue")
     path_of_folder = single_domain
@@ -31,13 +31,13 @@ def start():
 
     protocol = detect_http_or_https(single_domain)
     url = protocol
-    create_log(f'\n[-] Target Domain: {checking}\n', "green")
-    create_log(f'[-] Target IP: {domain_to_ip}\n', "green")
-    create_log(f'[-] PROTOCOL: {url}\n', "green")
+    create_log(f'\n[-] Target Domain: {checking}\n', "green4")
+    create_log(f'[-] Target IP: {domain_to_ip}\n', "green4")
+    create_log(f'[-] PROTOCOL: {url}\n', "green4")
     cms = detect_cms(single_domain)
-    create_log(f"[-] CMS: {cms}\n", "green")
+    create_log(f"[-] CMS: {cms}\n", "green4")
     server = detect_server(single_domain)
-    create_log(f"[-] SERVER: {server}\n", "green")
+    create_log(f"[-] SERVER: {server}\n", "green4")
     detect_waf(url, create_log)
     create_log('\n\n-----------------------------------------------\n')
     create_log('\n[*] Searching For Sensitive Paths & Files.....\n', "blue")
@@ -64,22 +64,21 @@ def start():
     create_log(f'\n[-] Vulns: {vulns}',"red")
     create_log(f'\n[-] Cpes:  {cpes}\n',"red")
     write_results_to_file(outing, domain_to_ip, ports, vulns, cpes)
-    create_log(f'\n[-] Results Saved To: {outing}\n',"green")
+    create_log(f'\n[-] Results Saved To: {outing}\n',"green4")
 
     create_log('\n-----------------------------------------------\n')
-
     create_log('\n[*] Extracting Javascript Urls....\n',"blue")
     from libraries.javascript import extract_js_links
     js_file = path_of_folder + '/javascript_urls.txt'
     extract_js_links(url, js_file)
-    create_log(f'\n[-] Javascript Urls Saved To: {js_file}\n', "green")
+    create_log(f'\n[-] Javascript Urls Saved To: {js_file}\n', "green4")
     create_log('\n-----------------------------------------------\n',"cyan")
     create_log("\n[*] Getting URLS From Public Archives...\n","blue")
     target = single_domain
     wayback_urls = fetch_urls_from_wayback(target)
     unique_urls = set()
     for url in wayback_urls:
-        url = url.strip()  # Remove leading/trailing whitespace
+        url = url.strip()  
         if url:
             unique_urls.add(url)
     filtered_urls = []
@@ -87,21 +86,21 @@ def start():
         if not re.search(r'\.(woff|ttf|svg|eot|png|jpe?g|css|ico)$', url, re.IGNORECASE):
             url = re.sub(r':(80|443)', '', url)
             filtered_urls.append(url)
-    output_file = path_of_folder + '/filtered_urls.txt'  # Path to the output file
+    output_file = path_of_folder + '/filtered_urls.txt'  
     with open(output_file, 'w') as file:
         for url in filtered_urls:
             file.write(url + '\n')
-    create_log(f"\n[-] Filtered URLs saved to {output_file}","green")
+    create_log(f"\n[-] Filtered URLs saved to {output_file}","green4")
     time.sleep(1)
 
-    create_log( '\n-----------------------------------------------\n',"cyan")
-
+    create_log( '\n-----------------------------------------------\n',"black")
     create_log("\n[*] Filtering URLS for Open Redirect Vulnerability\n","blue")
+    
 
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
-        create_log(f"\n[*] Folder Created Successfully...{path_of_folder}\n", "green")
+        create_log(f"\n[*] Folder Created Successfully...{path_of_folder}\n", "green4")
     else:
         create_log("Target Folder Already Exists...\n", "red")
         create_log("Remove Or Replace it before continuing...\n", "red")
@@ -196,9 +195,10 @@ log_text.pack(pady=10)
 
 # Adding color tags
 log_text.tag_configure("red", foreground="red")
-log_text.tag_configure("green", foreground="green")
+log_text.tag_configure("green4", foreground="green4")
 log_text.tag_configure("blue", foreground="blue")
 log_text.tag_configure("black", foreground="black")
+log_text.tag_configure("DarkGoldenrod1", foreground="DarkGoldenrod1")
 
 # Start GUI
 root.mainloop()

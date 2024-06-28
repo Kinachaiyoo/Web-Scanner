@@ -19,7 +19,7 @@ def scann(websiteToScan, output_file, create_log):
     if websiteToScan.endswith('/'):
         websiteToScan = websiteToScan.strip('/')
     websiteToScan = proto + websiteToScan
-    create_log("\n[*] Checking To See If Site Is Online...\n", "blue")
+    create_log("\n\n[*] Checking To See If Site Is Online...", "blue")
 
     try:
         onlineCheck = get(websiteToScan)
@@ -27,70 +27,69 @@ def scann(websiteToScan, output_file, create_log):
         create_log("\n[*] {websiteToScan} appeas to be Offline...", "red")
     else:
         if onlineCheck.status_code == 200 or onlineCheck.status_code == 301 or onlineCheck.status_code == 302:
-            create_log(f"\n[*] {websiteToScan} appears to be Online...","green")
-            create_log("\n[*] Checking To See If Site Is Redirecting","cyan")
+            create_log(f"\n[*] {websiteToScan} appears to be Online...","green4")
+            create_log("\n[*] Checking To See If Site Is Redirecting","blue")
             redirectCheck = requests.get(websiteToScan, headers=user_agent)
             if len(redirectCheck.history) > 0:
                 if '301' in str(redirectCheck.history[0]) or '302' in str(redirectCheck.history[0]):
-                    create_log("[!] Site is redirecting to " + redirectCheck.url,"red")
+                    create_log("\n[!] Site is redirecting to " + redirectCheck.url,"red")
             elif 'meta http-equiv="REFRESH"' in redirectCheck.text:
-                create_log("[!] The site entered appears to be redirecting, please verify the destination site to ensure accurate results!","red")
+                create_log("\n[!] The site entered appears to be redirecting, please verify the destination site to ensure accurate results!","red")
             else:
-                create_log("[*] Site does not appear to be redirecting...","green")
+                create_log("\n[*] Site does not appear to be redirecting...","green4")
         else:
-            create_log("[!] " + websiteToScan + " appears to be online but returned a " + str(
+            create_log("\n[!] " + websiteToScan + " appears to be online but returned a " + str(
                 onlineCheck.status_code) + " error.","red")
             exit()
         create_log('\n[*] Attempting To Get HTTP HEADERS..........','blue')
         for header in onlineCheck.headers:
             try:
-                create_log(" | " + header + " : " + onlineCheck.headers[header])
+                create_log("\n | " + header + " : " + onlineCheck.headers[header],"DarkGoldenrod1")
             except Exception as ex:
-                create_log("[!] Error: " + ex.message,"red")
+                create_log("\n[!] Error: " + ex.message,"red")
 
-        create_log('[*] Checking Cpanel........',"yellow")
+        create_log('\n[*] Checking Cpanel........',"blue")
         cpanel_url = websiteToScan + '/cpanel'
         try:
             response = requests.head(cpanel_url)
             if response.status_code == 200:
-                create_log(f"[*] cPanel Found: {cpanel_url}\n","green")
+                create_log(f"\n[*] cPanel Found: {cpanel_url}\n","green4")
 
             else:
-                create_log("[!] cPanel not detected on the website.\n","red")
+                create_log("\n[!] cPanel not detected on the website.\n","red")
         except requests.exceptions.RequestException as e:
-            create_log(Colors.red+"[!] An error occurred:", e)
-        create_log("[+] Running the WordPress scans...","blue")
+            create_log("\n[!] An error occurred:", "red")
+        create_log("\n[+] Running the WordPress scans...","blue")
 
         wpLoginCheck = requests.get(websiteToScan + '/wp-login.php', headers=user_agent)
         if wpLoginCheck.status_code == 200 and "user_login" in wpLoginCheck.text and "404" not in wpLoginCheck.text:
-            create_log("[!] Detected: WordPress WP-Login page: " + websiteToScan + '/wp-login.php',"grean")
-            detection_found = True
+            create_log("\n[!] Detected: WordPress WP-Login page: " + websiteToScan + '/wp-login.php',"green4")
+            detection_found = True , 
         else:
             detection_found = False
 
         wpAdminCheck = requests.get(websiteToScan + '/wp-admin', headers=user_agent)
         if wpAdminCheck.status_code == 200 and "user_login" in wpAdminCheck.text and "404" not in wpAdminCheck.text:
-            create_log("[!] Detected: WordPress WP-Admin page: " + websiteToScan + '/wp-admin',"grean")
-            detection_found = True
+            create_log("\n[!] Detected: WordPress WP-Admin page: " + websiteToScan + '/wp-admin',"green4")
+            detection_found = True 
 
         wpAdminUpgradeCheck = get(websiteToScan + '/wp-admin/upgrade.php')
         if wpAdminUpgradeCheck.status_code == 200 and "404" not in wpAdminUpgradeCheck.text:
             create_log(
-                "[!] Detected: WordPress WP-Admin/upgrade.php page: " + websiteToScan + '/wp-admin/upgrade.php',"grean")
+                "\n[!] Detected: WordPress WP-Admin/upgrade.php page: " + websiteToScan + '/wp-admin/upgrade.php',"grean")
             detection_found = True
 
         wpAdminReadMeCheck = get(websiteToScan + '/readme.html')
         if wpAdminReadMeCheck.status_code == 200 and "404" not in wpAdminReadMeCheck.text:
-            create_log("[!] Detected: WordPress Readme.html: " + websiteToScan + '/readme.html',"grean")
-            detection_found = True
-
+            create_log("\n[!] Detected: WordPress Readme.html: " + websiteToScan + '/readme.html',"green4")
+            detection_found = True 
         wpLinksCheck = get(websiteToScan)
         if 'wp-' in wpLinksCheck.text:
-            create_log("[!] Detected: WordPress wp- style links detected on index","grean")
-            detection_found = True
+            create_log("\n[!] Detected: WordPress wp- style links detected on index","green4")
+            detection_found = True 
 
         if not detection_found:
-            create_log("[!] No Wordpress Misconfiguration Found!!!","red")
+            create_log("\n[!] No Wordpress Misconfiguration Found!!!","red")
 
 
         ####################################################
@@ -101,20 +100,20 @@ def scann(websiteToScan, output_file, create_log):
 
         phpMyAdminCheck = get(websiteToScan)
         if phpMyAdminCheck.status_code == 200 and 'phpmyadmin' in phpMyAdminCheck.text:
-            create_log("[!] Detected: phpMyAdmin index page","green")
+            create_log("\n[!] Detected: phpMyAdmin index page","green4")
             detection_found = True
 
         pmaCheck = get(websiteToScan)
         if pmaCheck.status_code == 200 and ('pmahomme' in pmaCheck.text or 'pma_' in pmaCheck.text):
-            create_log("[!] Detected: phpMyAdmin pmahomme and pma_ style links on index page","green")
+            create_log("\n[!] Detected: phpMyAdmin pmahomme and pma_ style links on index page","green4")
             detection_found = True
 
         phpMyAdminConfigCheck = get(websiteToScan + '/config.inc.php')
         if phpMyAdminConfigCheck.status_code == 200 and '404' not in phpMyAdminConfigCheck.text:
-            create_log("[!] Detected: phpMyAdmin configuration file: " + websiteToScan + '/config.inc.php',"green")
+            create_log("\n[!] Detected: phpMyAdmin configuration file: " + websiteToScan + '/config.inc.php',"green4")
             detection_found = True
 
         if not detection_found:
-            create_log("[!] No PHPMYADMIN Misconfiguration Detected!!!","red")
+            create_log("\n[!] No PHPMYADMIN Misconfiguration Detected!!!","red")
 
 

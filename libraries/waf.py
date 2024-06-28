@@ -28,7 +28,7 @@ def detect_waf(url, create_log):
                 detected_wafs.append(waf_name)
 
         if detected_wafs:
-            create_log(f"[*] WAF DETECTED: {', '.join(detected_wafs)}", "green")
+            create_log(f"[*] WAF DETECTED: {', '.join(detected_wafs)}", "green4")
         else:
             create_log(f"[-] No WAF Detected on {url}","red")
     except requests.RequestException as e:

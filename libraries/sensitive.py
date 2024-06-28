@@ -5,7 +5,7 @@ def check_url(url, create_log):
     try:
         response = requests.get(url)
         if response.status_code == 200:
-            create_log(f"\n[-] Sensitive URL found: {url}", "green")
+            create_log(f"\n[-] Sensitive URL found: {url}", "green4")
     except Exception as e:
         create_log(f"\n[!] Error checking URL {url}: {e}\n", "red")
 
