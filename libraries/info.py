@@ -41,7 +41,7 @@ def scann(websiteToScan, output_file, create_log):
             create_log("\n[!] " + websiteToScan + " appears to be online but returned a " + str(
                 onlineCheck.status_code) + " error.","red")
             exit()
-        create_log('\n[*] Attempting To Get HTTP HEADERS..........','blue')
+        create_log('\n\n[*] Attempting To Get HTTP HEADERS..........','blue')
         for header in onlineCheck.headers:
             try:
                 create_log("\n | " + header + " : " + onlineCheck.headers[header],"DarkGoldenrod1")

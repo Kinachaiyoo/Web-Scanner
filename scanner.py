@@ -10,6 +10,8 @@ from tkinter import scrolledtext, messagebox
 import threading
 
 def start():
+    global single_domain
+    global protocol
     create_log(f"\n[*] Scanning Started on:  {start_time_str}", "green4")
     single_domain = domain_entry.get()
     create_log("\n[!] Creating a Target Folder ...... Please Wait", "blue")
@@ -132,6 +134,20 @@ def start():
     time.sleep(1)
     create_log(f'[-] Possible Vulnerable LFI Urls Saved To {red_out}',"green4")
 
+    attacks()
+
+def attacks():
+    path_of_folder = os.path.join(single_domain, "results")
+    # Create the folder if it doesn't exist
+    if not os.path.exists(path_of_folder):
+        os.makedirs(path_of_folder)
+    create_log('-----------------------------------------------')
+    create_log("\n[*] Testing For CORS Misconfiguration.........\n","blue")
+    from attacks.cors import cors_urls
+    url = protocol
+    cors_urls(url,create_log)
+
+
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
@@ -235,7 +251,7 @@ log_text.tag_configure("blue", foreground="blue")
 log_text.tag_configure("black", foreground="black")
 log_text.tag_configure("DarkGoldenrod1", foreground="DarkGoldenrod1")
 log_text.tag_configure("cyan", foreground="cyan")
-log_text.tag_configure("yellow", foreground="yellow")
+
 
 # Start GUI
 root.mainloop()
