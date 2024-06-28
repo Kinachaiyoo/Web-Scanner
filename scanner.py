@@ -10,9 +10,9 @@ from tkinter import scrolledtext, messagebox
 import threading
 
 def start():
-    create_log(f"\n[*] Scanning Started on:  {start_time_str}\n", "green4")
+    create_log(f"\n[*] Scanning Started on:  {start_time_str}", "green4")
     single_domain = domain_entry.get()
-    create_log("\n[!] Creating a Target Folder ...... Please Wait\n", "blue")
+    create_log("\n[!] Creating a Target Folder ...... Please Wait", "blue")
     path_of_folder = single_domain
     creating_folder_path(path_of_folder)
 
@@ -25,7 +25,7 @@ def start():
         checking = single_domain.replace('http://', '').replace('https://', '')
         domain_to_ip = socket.gethostbyname(checking)
 
-    create_log("\n[-]+++++++++++GATHERING TARGET'S INFORMATION++++++++++++\n", "blue")
+    create_log("\n[-]+++++++++++GATHERING TARGET'S INFORMATION++++++++++++", "blue")
     from libraries.tech import detect_cms, detect_server
     from libraries.waf import detect_waf
 
@@ -40,7 +40,7 @@ def start():
     create_log(f"[-] SERVER: {server}\n", "green4")
     detect_waf(url, create_log)
     create_log('\n\n-----------------------------------------------\n')
-    create_log('\n[*] Searching For Sensitive Paths & Files.....\n', "blue")
+    create_log('\n[*] Searching For Sensitive Paths & Files.....', "blue")
 
     from libraries.sensitive import find_sensitive_urls
     find_sensitive_urls(protocol, create_log)
@@ -53,7 +53,7 @@ def start():
     outing=os.path.join(folder_path1, "scanned_ports.txt")
     scann(single_domain, output_file, create_log)
     create_log('\n\n-----------------------------------------------\n')
-    create_log('\n[+] Scanning Open Ports And Finding Exploits:-\n', "blue")
+    create_log('\n[+] Scanning Open Ports And Finding Exploits:-', "blue")
     dest = f"https://internetdb.shodan.io/{domain_to_ip}"
     response = requests.get(dest)
     data = response.json()
@@ -62,18 +62,18 @@ def start():
     cpes = data.get('cpes', [])
     create_log(f'\n[-] Ports: {ports}',"red")
     create_log(f'\n[-] Vulns: {vulns}',"red")
-    create_log(f'\n[-] Cpes:  {cpes}\n',"red")
+    create_log(f'\n[-] Cpes:  {cpes}',"red")
     write_results_to_file(outing, domain_to_ip, ports, vulns, cpes)
     create_log(f'\n[-] Results Saved To: {outing}\n',"green4")
 
     create_log('\n-----------------------------------------------\n')
-    create_log('\n[*] Extracting Javascript Urls....\n',"blue")
+    create_log('\n[*] Extracting Javascript Urls....',"blue")
     from libraries.javascript import extract_js_links
     js_file = path_of_folder + '/javascript_urls.txt'
     extract_js_links(url, js_file)
     create_log(f'\n[-] Javascript Urls Saved To: {js_file}\n', "green4")
-    create_log('\n-----------------------------------------------\n',"cyan")
-    create_log("\n[*] Getting URLS From Public Archives...\n","blue")
+    create_log('\n-----------------------------------------------\n')
+    create_log("\n[*] Getting URLS From Public Archives...","blue")
     target = single_domain
     wayback_urls = fetch_urls_from_wayback(target)
     unique_urls = set()
@@ -90,12 +90,47 @@ def start():
     with open(output_file, 'w') as file:
         for url in filtered_urls:
             file.write(url + '\n')
-    create_log(f"\n[-] Filtered URLs saved to {output_file}","green4")
+    create_log(f"\n[-] Filtered URLs saved to {output_file}\n","green4")
     time.sleep(1)
 
-    create_log( '\n-----------------------------------------------\n',"black")
+    create_log( '\n-----------------------------------------------\n',)
     create_log("\n[*] Filtering URLS for Open Redirect Vulnerability\n","blue")
-    
+    from libraries.redirect import apply_filter
+    fil_urls = output_file
+    red_out = path_of_folder + '/redirect_urls.txt'
+    apply_filter(fil_urls, red_out)
+    time.sleep(1)
+    create_log(f"[-] Possible Vulnerable Open Redirect Urls Saved To {red_out}\n","green4")
+    time.sleep(1)
+
+    create_log('\n-----------------------------------------------\n',"yellow")
+    create_log("\n[*] Filtering URLS for Cross Site Scripting...","blue")
+    from libraries.xss import apply_filter
+    input_file = output_file
+    xss_file = path_of_folder + '/xss_urls.txt'
+    apply_filter(input_file, xss_file)
+    time.sleep(1)
+    create_log(f'\n[-] Possible Vulnerable XSS Urls Saved To {xss_file}\n',"green4")
+    time.sleep(1)
+
+    create_log('\n-----------------------------------------------\n',"yellow")
+    create_log("\n[*] Filtering URLS for SQL Injection.....\n","blue")
+    from libraries.sqli import sql_urls
+    input_file = output_file
+    sql_file = path_of_folder + '/sql_urls.txt'
+    sql_urls(input_file, sql_file)
+    time.sleep(1)
+    create_log(f"[-] Possible Vulnerable SQLI Urls Saved To {sql_file}\n","green4")
+    time.sleep(1)
+
+    create_log('\n-----------------------------------------------\n')
+    create_log("\n[*] Filtering URLS for Local File Inclusion (LFI)...\n","blue")
+    from libraries.lfi import apply_filter
+    fil_urls = output_file
+    red_out = path_of_folder + '/lfi_urls.txt'
+    apply_filter(fil_urls, red_out)
+    time.sleep(1)
+    create_log(f'[-] Possible Vulnerable LFI Urls Saved To {red_out}',"green4")
 
 def creating_folder_path(path_of_folder):
     if not os.path.exists(path_of_folder):
@@ -199,6 +234,8 @@ log_text.tag_configure("green4", foreground="green4")
 log_text.tag_configure("blue", foreground="blue")
 log_text.tag_configure("black", foreground="black")
 log_text.tag_configure("DarkGoldenrod1", foreground="DarkGoldenrod1")
+log_text.tag_configure("cyan", foreground="cyan")
+log_text.tag_configure("yellow", foreground="yellow")
 
 # Start GUI
 root.mainloop()

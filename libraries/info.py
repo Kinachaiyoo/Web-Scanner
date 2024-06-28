@@ -89,12 +89,8 @@ def scann(websiteToScan, output_file, create_log):
             detection_found = True 
 
         if not detection_found:
-            create_log("\n[!] No Wordpress Misconfiguration Found!!!","red")
+            create_log("\n[!] No Wordpress Misconfiguration Found!!!\n","red")
 
-
-        ####################################################
-        # phpMyAdmin Scans
-        ####################################################
 
         create_log("\n[+] Running the phpMyAdmin scans...","blue")
 
