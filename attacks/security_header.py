@@ -19,13 +19,11 @@ def check_security_headers(url, user_agent, create_log):
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!]An error occurred while checking security headers: {e}")
 
-# Example usage in the main scanning function
 if __name__ == "__main__":
     def create_log(message):
         print(message)
 
-    starting_url = "http://example.com"  # Replace with the starting URL
+    starting_url = "http://example.com"  
     user_agent = "Mozilla/5.0"
 
-    # Call your functions here
     check_security_headers(starting_url, user_agent, create_log)

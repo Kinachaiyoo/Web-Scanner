@@ -18,7 +18,7 @@ def check_sql_injection(url, user_agent, create_log):
                 new_query = urlencode(query_params, doseq=True)
                 new_url = urlunparse(parsed_url._replace(query=new_query))
                 
-                create_log(f"\n[*] Testing URL: {new_url}")  # Log each URL being tested
+                create_log(f"\n[*] Testing URL: {new_url}") 
                 response = requests.get(new_url, headers=headers)
                 
                 if "syntax error" in response.text.lower() or "mysql" in response.text.lower():
@@ -28,13 +28,11 @@ def check_sql_injection(url, user_agent, create_log):
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!]An error occurred while checking SQL injection: {e}","red")
 
-# Example usage within your main scanning function
 if __name__ == "__main__":
     def create_log(message):
         print(message)
 
-    starting_url = "http://example.com"  # Replace with the starting URL
+    starting_url = "http://example.com"  
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 
-    # Example call to check SQL Injection
     check_sql_injection(starting_url, user_agent, create_log)

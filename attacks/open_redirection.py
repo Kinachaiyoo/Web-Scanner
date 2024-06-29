@@ -31,13 +31,11 @@ def check_open_redirect(url, user_agent, create_log):
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!] An error occurred while checking Open Redirect: {e}")
 
-# Example usage in the main scanning function
 if __name__ == "__main__":
     def create_log(message, color=None):
         print(message)
 
-    starting_url = "http://example.com"  # Replace with the starting URL
+    starting_url = "http://example.com"  
     user_agent = "Mozilla/5.0"
 
-    # Call your functions here
     check_open_redirect(starting_url, user_agent, create_log)

@@ -26,7 +26,6 @@ def check_directory_traversal(url, user_agent, create_log):
             test_url = f"{url}?path={payload}"
             response = requests.get(test_url, headers=headers)
             
-            # Check for potential indicators of a directory traversal vulnerability
             if "root:x" in response.text or "[extensions]" in response.text:
                 create_log(f"\n[!] Directory Traversal vulnerability detected at {test_url}","red")
             else:
@@ -34,13 +33,11 @@ def check_directory_traversal(url, user_agent, create_log):
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!]An error occurred while checking Directory Traversal: {e}","red")
 
-# Example usage in the main scanning function
 if __name__ == "__main__":
     def create_log(message):
         print(message)
 
-    starting_url = "http://example.com"  # Replace with the starting URL
+    starting_url = "http://example.com"  
     user_agent = "Mozilla/5.0"
 
-    # Call your functions here
     check_directory_traversal(starting_url, user_agent, create_log)

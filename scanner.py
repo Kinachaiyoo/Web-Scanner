@@ -140,7 +140,7 @@ def attacks():
     url = protocol
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     path_of_folder = os.path.join(single_domain, "results")
-    # Create the folder if it doesn't exist
+
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
     create_log('\n-----------------------------------------------\n')
@@ -263,33 +263,27 @@ def options():
 """, "blue")
 
 def create_log(message, color="black"):
-    # Use the `after` method to safely update the GUI from the background thread
     log_text.after(0, log_text.insert, tk.END, message, color)
     log_text.after(0, log_text.see, tk.END)
 
 def run_scan():
-    # Start the scanning process in a new thread
     threading.Thread(target=start).start()
 
-# GUI Setup
+#GUI code
 root = tk.Tk()
 root.title("Web Domain Scanner")
 root.geometry("800x600")
 
-# Domain Entry
 tk.Label(root, text="Enter the Domain Name (website.com):").pack(pady=10)
 domain_entry = tk.Entry(root, width=50)
 domain_entry.pack(pady=10)
 
-# Buttons
 tk.Button(root, text="START SCAN", command=run_scan).pack(pady=10)
 tk.Button(root, text="SHOW AVAILABLE SCANNING MODULE", command=options).pack(pady=10)
 
-# Log Output
 log_text = scrolledtext.ScrolledText(root, width=100, height=30)
 log_text.pack(pady=10)
 
-# Adding color tags
 log_text.tag_configure("red", foreground="red")
 log_text.tag_configure("green4", foreground="green4")
 log_text.tag_configure("blue", foreground="blue")
@@ -298,5 +292,4 @@ log_text.tag_configure("DarkGoldenrod1", foreground="DarkGoldenrod1")
 log_text.tag_configure("cyan", foreground="cyan")
 log_text.tag_configure("purple3", foreground="purple3")
 
-# Start GUI
 root.mainloop()

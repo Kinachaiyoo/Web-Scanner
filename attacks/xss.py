@@ -37,13 +37,11 @@ def check_xss(url, user_agent, create_log):
     except requests.exceptions.RequestException as e:
         create_log(f"[!]An error occurred while checking XSS: {e}")
 
-# Example usage in the main scanning function
 if __name__ == "__main__":
     def create_log(message, color=None):
         print(message)
 
-    starting_url = "http://example.com"  # Replace with the starting URL
+    starting_url = "http://example.com"  
     user_agent = "Mozilla/5.0"
 
-    # Call your functions here
     check_xss(starting_url, user_agent, create_log)

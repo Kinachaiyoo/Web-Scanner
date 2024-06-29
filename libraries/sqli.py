@@ -36,7 +36,6 @@ def sql_urls(input_file, sql_file):
     with open(input_file, 'r') as file:
         urls = file.readlines()
 
-    # Match the patterns against the URLs and save the matching URLs in a file
     with open(sql_file, 'w') as file:
         for url in urls:
             if any(pattern in url for pattern in patterns):

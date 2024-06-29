@@ -42,11 +42,9 @@ patterns = [
 ]
 
 def apply_filter(fil_urls, red_out):
-    # Read the file containing URLs
     with open(fil_urls, 'r') as file:
         urls = file.readlines()
 
-    # Apply the sed filter and save the result in a file
     with open(red_out, 'w') as file:
         for url in urls:
             if any(pattern in url for pattern in patterns):
