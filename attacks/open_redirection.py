@@ -27,7 +27,7 @@ def check_open_redirect(url, user_agent, create_log):
             if response.status_code in [301, 302] and response.headers.get('Location') == payload:
                 create_log(f"\n[!] Open Redirect vulnerability detected at {test_url}", "red")
             else:
-                create_log(f"\n[-] Open Redirect vulnerability not detected at {test_url} with payload {payload}", "green4")
+                create_log(f"\n[-] Open Redirect vulnerability not detected at {test_url} with payload {payload}", "chartreuse2")
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!] An error occurred while checking Open Redirect: {e}")
 

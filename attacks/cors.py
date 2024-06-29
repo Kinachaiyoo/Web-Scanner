@@ -17,9 +17,9 @@ def check_cors(url, create_log,):
                 create_log(f"[-] URL: {url} [Vulnerable]", "red")
                 save_vulnerability(url)
             else:
-                create_log(f"URL: {url} [Not Vulnerable]", "green4")
+                create_log(f"[-]URL: {url} [Not Vulnerable]", "chartreuse2")
         else:
-            create_log(f"URL: {url} [Not Vulnerable]", "green4")
+            create_log(f"[-]URL: {url} [Not Vulnerable]", "chartreuse2")
 
     except requests.exceptions.RequestException as e:
         create_log(f"[-] An error occurred for URL: {url} - {e}", "red")

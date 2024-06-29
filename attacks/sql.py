@@ -9,7 +9,7 @@ def check_sql_injection(url, user_agent, create_log):
         sql_payloads = ["' OR '1'='1", "' OR '1'='1' --", "' OR 1=1 --", '" OR "1"="1', '" OR "1"="1" --']
 
         if not query_params:
-            create_log("\n[*] No query parameters found in the URL. SQL Injection check skipped.","green4")
+            create_log("\n[*] No query parameters found in the URL. SQL Injection check skipped.","chartreuse2")
             return
 
         for param in query_params:
@@ -24,7 +24,7 @@ def check_sql_injection(url, user_agent, create_log):
                 if "syntax error" in response.text.lower() or "mysql" in response.text.lower():
                     create_log(f"\n[!] Potential SQL Injection vulnerability detected at {new_url}","red")
                 else:
-                    create_log(f"\n[-] SQL Injection vulnerability not detected at {new_url}","green4")
+                    create_log(f"\n[-] SQL Injection vulnerability not detected at {new_url}","chartreuse2")
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!]An error occurred while checking SQL injection: {e}","red")
 

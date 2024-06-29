@@ -1,4 +1,0 @@
-[ ✔ ] [IP]: 104.21.44.31
-[ ✔ ] [PORTS]: [80, 443, 2082, 2086, 2087, 8080, 8443]
-[ ✔ ] [VULNS]: ['CVE-2020-7656', 'CVE-2015-9251', 'CVE-2020-11023', 'CVE-2012-6708', 'CVE-2019-11358', 'CVE-2020-11022']
-[ ✔ ] [INFO]: ['cpe:/a:varnish-software:varnish_cache', 'cpe:/a:php:php', 'cpe:/a:jquery:jquery:1.7.2', 'cpe:/a:drupal:drupal:7', 'cpe:/a:f5:nginx', 'cpe:/a:mariadb_project:mariadb']

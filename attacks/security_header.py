@@ -15,7 +15,7 @@ def check_security_headers(url, user_agent, create_log):
             if header not in response.headers:
                 create_log(f"\n[!] Missing Security Header: {header} ({description})","red")
             else:
-                create_log(f"\n[*] Security Header Found: {header}","green4")
+                create_log(f"\n[*] Security Header Found: {header}","chartreuse2")
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!]An error occurred while checking security headers: {e}")
 

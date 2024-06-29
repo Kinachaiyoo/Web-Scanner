@@ -8,7 +8,7 @@ def detect_waf(url, create_log):
 
     waf_list = [
         'aeSecure', 'Airlock', 'Akamai', 'AliYunDun', 'Anquanbao', 'Approach', 'Armor', 'AWS WAF', 'Azion', 'Barracuda',
-        'BelugaCDN', 'BinarySEC', 'BitNinja', 'BlockDoS', 'Bluedon', 'BulletProof Security', 'CacheFly', 'CDN77',
+        'BelugaCDN', 'BinarySEC', 'BitNinja', 'BlockDoS', 'cyandon', 'BulletProof Security', 'CacheFly', 'CDN77',
         'ChinaCache', 'Cloudbric', 'Cloudflare', 'Comodo', 'CrawlProtect', 'DenyALL', 'Distil Networks', 'DoSArrest',
         'DotDefender', 'Edgecast', 'EdgeProtect', 'Eisoo Cloud', 'ExpressionEngine', 'F5 BIG-IP ASM', 'FortiWeb',
         'GoDaddy', 'Greywizard', 'HuaweiCloud', 'HyperGuard', 'Imperva', 'Incapsula', 'IndusGuard', 'Instart Logic',
@@ -28,7 +28,7 @@ def detect_waf(url, create_log):
                 detected_wafs.append(waf_name)
 
         if detected_wafs:
-            create_log(f"[*] WAF DETECTED: {', '.join(detected_wafs)}", "green4")
+            create_log(f"[*] WAF DETECTED: {', '.join(detected_wafs)}", "chartreuse2")
         else:
             create_log(f"[-] No WAF Detected on {url}","red")
     except requests.RequestException as e:

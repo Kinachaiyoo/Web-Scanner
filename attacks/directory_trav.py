@@ -29,7 +29,7 @@ def check_directory_traversal(url, user_agent, create_log):
             if "root:x" in response.text or "[extensions]" in response.text:
                 create_log(f"\n[!] Directory Traversal vulnerability detected at {test_url}","red")
             else:
-                create_log(f"\n[-] No Directory Traversal vulnerability found using {payload}","green4")
+                create_log(f"\n[-] No Directory Traversal vulnerability found using {payload}","chartreuse2")
     except requests.exceptions.RequestException as e:
         create_log(f"\n[!]An error occurred while checking Directory Traversal: {e}","red")
 

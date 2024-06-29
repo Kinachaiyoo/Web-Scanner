@@ -33,7 +33,7 @@ def check_xss(url, user_agent, create_log):
             if payload in response.text:
                 create_log(f"\n[!] XSS vulnerability detected at {test_url}","red")
             else:
-                create_log(f"\n[-] XSS vulnerability not detected at {test_url}","green4")
+                create_log(f"\n[-] XSS vulnerability not detected at {test_url}","chartreuse2")
     except requests.exceptions.RequestException as e:
         create_log(f"[!]An error occurred while checking XSS: {e}")
 
