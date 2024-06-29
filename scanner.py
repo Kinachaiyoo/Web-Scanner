@@ -66,14 +66,14 @@ def start():
     create_log(f'\n[-] Vulns: {vulns}',"red")
     create_log(f'\n[-] Cpes:  {cpes}',"red")
     write_results_to_file(outing, domain_to_ip, ports, vulns, cpes)
-    create_log(f'\n[-] Results Saved To: {outing}\n',"green4")
+    create_log(f'\n[-] Results Saved To: {outing}\n',"DarkGoldenrod1")
 
     create_log('\n-----------------------------------------------\n')
     create_log('\n[*] Extracting Javascript Urls....',"blue")
     from libraries.javascript import extract_js_links
     js_file = path_of_folder + '/javascript_urls.txt'
     extract_js_links(url, js_file)
-    create_log(f'\n[-] Javascript Urls Saved To: {js_file}\n', "green4")
+    create_log(f'\n[-] Javascript Urls Saved To: {js_file}\n', "DarkGoldenrod1")
     create_log('\n-----------------------------------------------\n')
     create_log("\n[*] Getting URLS From Public Archives...","blue")
     target = single_domain
@@ -92,7 +92,7 @@ def start():
     with open(output_file, 'w') as file:
         for url in filtered_urls:
             file.write(url + '\n')
-    create_log(f"\n[-] Filtered URLs saved to {output_file}\n","green4")
+    create_log(f"\n[-] Filtered URLs saved to {output_file}\n","DarkGoldenrod1")
     time.sleep(1)
 
     create_log( '\n-----------------------------------------------\n',)
@@ -102,7 +102,7 @@ def start():
     red_out = path_of_folder + '/redirect_urls.txt'
     apply_filter(fil_urls, red_out)
     time.sleep(1)
-    create_log(f"[-] Possible Vulnerable Open Redirect Urls Saved To {red_out}\n","green4")
+    create_log(f"[-] Possible Vulnerable Open Redirect Urls Saved To {red_out}\n","DarkGoldenrod1")
     time.sleep(1)
 
     create_log('\n-----------------------------------------------\n',"yellow")
@@ -112,7 +112,7 @@ def start():
     xss_file = path_of_folder + '/xss_urls.txt'
     apply_filter(input_file, xss_file)
     time.sleep(1)
-    create_log(f'\n[-] Possible Vulnerable XSS Urls Saved To {xss_file}\n',"green4")
+    create_log(f'\n[-] Possible Vulnerable XSS Urls Saved To {xss_file}\n',"DarkGoldenrod1")
     time.sleep(1)
 
     create_log('\n-----------------------------------------------\n',"yellow")
@@ -122,7 +122,7 @@ def start():
     sql_file = path_of_folder + '/sql_urls.txt'
     sql_urls(input_file, sql_file)
     time.sleep(1)
-    create_log(f"[-] Possible Vulnerable SQLI Urls Saved To {sql_file}\n","green4")
+    create_log(f"[-] Possible Vulnerable SQLI Urls Saved To {sql_file}\n","DarkGoldenrod1")
     time.sleep(1)
 
     create_log('\n-----------------------------------------------\n')
@@ -132,11 +132,13 @@ def start():
     red_out = path_of_folder + '/lfi_urls.txt'
     apply_filter(fil_urls, red_out)
     time.sleep(1)
-    create_log(f'[-] Possible Vulnerable LFI Urls Saved To {red_out}',"green4")
+    create_log(f'[-] Possible Vulnerable LFI Urls Saved To {red_out}',"DarkGoldenrod1")
 
     attacks()
 
 def attacks():
+    url = protocol
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     path_of_folder = os.path.join(single_domain, "results")
     # Create the folder if it doesn't exist
     if not os.path.exists(path_of_folder):
@@ -144,11 +146,36 @@ def attacks():
     create_log('\n-----------------------------------------------\n')
     create_log("\n[*] Testing For CORS Misconfiguration.........\n","blue")
     from attacks.cors import check_cors
-    url = protocol
     check_cors(url,create_log)
 
+    create_log('\n\n-----------------------------------------------\n')
+    create_log("\n[*] Testing For XSS Detection.........","blue")
+    from attacks.xss import check_xss
+    check_xss(url,user_agent,create_log)
+
     create_log('\n-----------------------------------------------\n')
-    create_log("\n[*] Bruteforcing Directories.....","blue")
+    create_log("\n[*] Testing For Open Redirect Detection.........","blue")
+    from attacks.open_redirection import check_open_redirect
+    check_open_redirect(url,user_agent,create_log)
+
+    create_log('\n\n-----------------------------------------------\n')
+    create_log("\n[*] Testing For Security Headers Detection.........","blue")
+    from attacks.security_header import check_security_headers
+    check_security_headers(url,user_agent,create_log)
+
+    create_log('\n\n-----------------------------------------------\n')
+    create_log("\n[*] Testing For Directory Tracersal Detection.........","blue")
+    from attacks.directory_trav import check_directory_traversal
+    check_directory_traversal(url,user_agent,create_log)
+
+    create_log('\n-----------------------------------------------\n')
+    create_log("\n[*] Testing for SQL Injections...","blue")
+    from attacks.sql import check_sql_injection
+    url = protocol
+    check_sql_injection(url,user_agent,create_log)
+
+    create_log('\n-----------------------------------------------\n')
+    create_log("\n[*] Bruteforcing Directories...","blue")
     from attacks.dirbs import crawl_website
     website_url = protocol
     user_agents = [
@@ -161,8 +188,8 @@ def attacks():
         crawl_website(website_url, user_agent,create_log)
         create_log("")
     elapsed_time = time.time() - start_time
+    create_log(f"\n[*] Total Time Taken:  {elapsed_time}\n","red")
     create_log('\n-----------------------------------------------\n')
-    create_log(f"[*] Total Time Taken:  {elapsed_time}","red")
 
 
 
