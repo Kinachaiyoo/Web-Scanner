@@ -141,11 +141,29 @@ def attacks():
     # Create the folder if it doesn't exist
     if not os.path.exists(path_of_folder):
         os.makedirs(path_of_folder)
-    create_log('-----------------------------------------------')
+    create_log('\n-----------------------------------------------\n')
     create_log("\n[*] Testing For CORS Misconfiguration.........\n","blue")
-    from attacks.cors import cors_urls
+    from attacks.cors import check_cors
     url = protocol
-    cors_urls(url,create_log)
+    check_cors(url,create_log)
+
+    create_log('\n-----------------------------------------------\n')
+    create_log("\n[*] Bruteforcing Directories.....","blue")
+    from attacks.dirbs import crawl_website
+    website_url = protocol
+    user_agents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/91.0.2 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/91.0.2 Safari/537.36',
+    ]
+    for user_agent in user_agents:
+        crawl_website(website_url, user_agent,create_log)
+        create_log("")
+    elapsed_time = time.time() - start_time
+    create_log('\n-----------------------------------------------\n')
+    create_log(f"[*] Total Time Taken:  {elapsed_time}","red")
+
 
 
 def creating_folder_path(path_of_folder):
@@ -153,7 +171,7 @@ def creating_folder_path(path_of_folder):
         os.makedirs(path_of_folder)
         create_log(f"\n[*] Folder Created Successfully...{path_of_folder}\n", "green4")
     else:
-        create_log("Target Folder Already Exists...\n", "red")
+        create_log("\nTarget Folder Already Exists...\n", "red")
         create_log("Remove Or Replace it before continuing...\n", "red")
         exit()
 
@@ -251,7 +269,7 @@ log_text.tag_configure("blue", foreground="blue")
 log_text.tag_configure("black", foreground="black")
 log_text.tag_configure("DarkGoldenrod1", foreground="DarkGoldenrod1")
 log_text.tag_configure("cyan", foreground="cyan")
-
+log_text.tag_configure("purple3", foreground="purple3")
 
 # Start GUI
 root.mainloop()
