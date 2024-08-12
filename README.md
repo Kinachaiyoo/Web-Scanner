@@ -1,51 +1,3 @@
-
-**# Web Domain Scanner**
-
-The **Web Domain Scanner** is a comprehensive tool designed to gather detailed information about a given web domain and identify potential security vulnerabilities. It features a user-friendly GUI built with Tkinter, allowing users to perform various scans, including port scanning, CMS detection, and vulnerability checks, all from one interface.
-
-## Features
-
-- **Domain Information Gathering**: Collects IP address, server details, CMS, and protocol information.
-- **Sensitive Path Finder**: Identifies sensitive paths and files on the target domain.
-- **Vulnerability Scans**:
-  - Cross-Origin Resource Sharing (CORS) Misconfigurations
-  - SQL Injection
-  - Cross-Site Scripting (XSS)
-  - Open Redirects
-  - Local File Inclusions (LFI)
-- **Port Scanning**: Identifies open ports and associated vulnerabilities.
-- **JavaScript URL Extraction**: Gathers all JavaScript URLs from the target domain.
-- **Public Archives URL Fetching**: Extracts URLs from public archives for further analysis.
-- **Directory Brute-Forcing**: Attempts to brute-force directories to find hidden files or folders.
-- **Results Logging**: All scan results are saved in a structured directory for easy review.
-
-## Installation
-
-### Prerequisites
-
-- Python 3.8+
-- Tkinter (comes pre-installed with Python on most platforms)
-- Required Python libraries (install via `requirements.txt`)
-
-### Setup
-
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/potatoaimer44/webscanner.git
-
-2. **Libraries**:
-    Install required libraries
-   
-3. **Libraries**:
-   ```bash
-   python web_scanner.py
-
-
-
-Here’s a sample README.md for your web domain scanner project:
-
-markdown
-Copy code
 # Web Domain Scanner
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
@@ -84,37 +36,39 @@ The **Web Domain Scanner** is a comprehensive tool designed to gather detailed i
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/web-domain-scanner.git
+   git clone https://github.com/potatoaimer44/webscanner.git
    cd web-domain-scanner
-Install Dependencies:
 
-bash
-Copy code
-pip install -r requirements.txt
-Run the Scanner:
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
 
-bash
-Copy code
-python web_scanner.py
-Usage
-Launch the application:
+3. **Run the Scanner**:
+   ```bash
+   python web_scanner.py
 
-Run the web_scanner.py file, and the Tkinter GUI will open.
-Enter the domain:
+   
+## Usage
 
-Input the domain you wish to scan (e.g., example.com).
-Start the scan:
+1. **Launch the Application**:
+   - Run the `web_scanner.py` script using Python, and the Tkinter GUI will open.
 
-Click the START SCAN button to begin scanning.
-View logs and results:
+2. **Enter the Domain**:
+   - Input the domain you wish to scan in the provided field (e.g., `example.com`).
 
-Real-time logs will appear in the GUI, and detailed results will be saved in the /results folder.
-Explore available modules:
+3. **Start the Scan**:
+   - Click the `START SCAN` button to initiate the scanning process. The scanner will begin gathering information about the domain and checking for vulnerabilities.
 
-Click SHOW AVAILABLE SCANNING MODULE to see the list of available scan options.
+4. **Monitor Logs**:
+   - Real-time logs will be displayed in the text area within the GUI, detailing the actions taken by the scanner and the results of each scan.
+
+5. **View Results**:
+   - After the scan is complete, the results will be saved in a folder named after the target domain. This folder will contain files with detailed information about detected vulnerabilities, open ports, sensitive paths, and more.
+
+6. **Explore Available Modules**:
+   - To view the different scanning modules available, click the `SHOW AVAILABLE SCANNING MODULE` button. This will display a list of all the features the scanner can perform.
 
 ## File Structure
-
 web-domain-scanner/
 │
 ├── attacks/                 # Modules for specific attacks
@@ -141,3 +95,6 @@ web-domain-scanner/
 ├── web_scanner.py           # Main application script
 ├── requirements.txt         # Python dependencies
 └── README.md                # Project documentation
+
+
+
